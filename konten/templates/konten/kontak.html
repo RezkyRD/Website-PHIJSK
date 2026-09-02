@@ -1,0 +1,18 @@
+{% extends "konten/base.html" %}
+{% block title %}Kontak{% endblock %}
+{% block content %}
+
+<h1>Kontak</h1>
+
+{% if info %}
+<div style="line-height:1.8;">
+  <p><strong>Alamat:</strong><br>{{ info.alamat|linebreaksbr }}</p>
+  {% if info.telepon %}<p><strong>Telepon:</strong> {{ info.telepon }}</p>{% endif %}
+  {% if info.email %}<p><strong>Email:</strong> {{ info.email }}</p>{% endif %}
+  {% if info.jam_operasional %}<p><strong>Jam Operasional:</strong> {{ info.jam_operasional }}</p>{% endif %}
+</div>
+{% else %}
+<p style="color:#5b6b82;">Informasi kontak belum diisi di admin.</p>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "konten/base.html" %}
+{% block title %}{{ unit.nama }}{% endblock %}
+{% block content %}
+
+<h1>{{ unit.nama }}</h1>
+
+<div style="border-bottom: 2px solid #e2e8f0; display:flex; gap: 4px; margin-bottom: 26px;">
+  {% for key, label in tabs %}
+  <a href="?tab={{ key }}"
+     style="padding:10px 16px; text-decoration:none; font-weight:600; font-size:0.9rem;
+            {% if tab == key %}color:#16305c; border-bottom:3px solid #2f6fed; margin-bottom:-2px;
+            {% else %}color:#5b6b82;{% endif %}">
+    {{ label }}
+  </a>
+  {% endfor %}
+</div>
+
+{% if tab == "beranda" %}
+  {% if unit.deskripsi_beranda %}
+    <div style="white-space: pre-line; line-height:1.6;">{{ unit.deskripsi_beranda }}</div>
+  {% else %}
+    <p style="color:#5b6b82;">Belum ada deskripsi untuk unit ini.</p>
+  {% endif %}
+
+{% elif tab == "berita" %}
+  {% if berita_list %}
+    <div style="display:grid; gap:16px;">
+      {% for b in berita_list %}
+      <a href="{% url 'konten:berita_detail' b.slug %}" style="text-decoration:none; color:inherit;">
+        <div style="border:1px solid #e2e8f0; border-radius:6px; padding:16px;">
+          <div style="font-size:0.78rem; color:#5b6b82;">{{ b.tanggal_publish|date:"d M Y" }}</div>
+          <div style="font-weight:600; color:#16305c; margin-top:4px;">{{ b.judul }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p style="color:#5b6b82;">Belum ada berita untuk unit ini.</p>
+  {% endif %}
+
+{% elif tab == "tusi" %}
+  {% if unit.tusi %}
+    <div style="white-space: pre-line; line-height:1.6;">{{ unit.tusi }}</div>
+  {% else %}
+    <p style="color:#5b6b82;">Tugas dan fungsi belum diisi.</p>
+  {% endif %}
+
+{% elif tab == "struktur" %}
+  {% if unit.struktur_organisasi_gambar %}
+    <img src="{{ unit.struktur_organisasi_gambar.url }}" alt="Struktur Organisasi {{ unit.nama }}"
+         style="max-width:100%; border:1px solid #e2e8f0; border-radius:6px;">
+  {% endif %}
+  {% if unit.struktur_organisasi_keterangan %}
+    <div style="white-space: pre-line; line-height:1.6; margin-top:16px;">{{ unit.struktur_organisasi_keterangan }}</div>
+  {% endif %}
+  {% if not unit.struktur_organisasi_gambar and not unit.struktur_organisasi_keterangan %}
+    <p style="color:#5b6b82;">Struktur organisasi belum diunggah.</p>
+  {% endif %}
+{% endif %}
+
+{% endblock %}

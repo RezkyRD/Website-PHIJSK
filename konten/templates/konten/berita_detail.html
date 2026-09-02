@@ -1,0 +1,18 @@
+{% extends "konten/base.html" %}
+{% block title %}{{ berita.judul }}{% endblock %}
+{% block content %}
+
+<p style="font-size:0.85rem;"><a href="{% url 'konten:unit_detail' berita.unit_kerja.slug %}">&larr; {{ berita.unit_kerja.nama }}</a></p>
+
+<h1>{{ berita.judul }}</h1>
+<div style="color:#5b6b82; font-size:0.85rem; margin-bottom:20px;">
+  {{ berita.unit_kerja.nama }} &middot; {{ berita.tanggal_publish|date:"d F Y" }}
+</div>
+
+{% if berita.gambar %}
+<img src="{{ berita.gambar.url }}" alt="{{ berita.judul }}" style="max-width:100%; border-radius:6px; margin-bottom:20px;">
+{% endif %}
+
+<div style="white-space: pre-line; line-height:1.7;">{{ berita.isi }}</div>
+
+{% endblock %}

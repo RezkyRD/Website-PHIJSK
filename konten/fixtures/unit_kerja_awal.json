@@ -1,0 +1,8 @@
+[
+  {"model": "konten.unitkerja", "pk": 1, "fields": {"nama": "Sekretariat Direktorat Jenderal", "slug": "sesditjen", "singkatan": "Sesditjen", "urutan": 1, "deskripsi_beranda": "", "tusi": "", "struktur_organisasi_gambar": null, "struktur_organisasi_keterangan": ""}},
+  {"model": "konten.unitkerja", "pk": 2, "fields": {"nama": "Direktorat Hubungan Kerja dan Perlindungan", "slug": "direktorat-hkp", "singkatan": "HKP", "urutan": 2, "deskripsi_beranda": "", "tusi": "", "struktur_organisasi_gambar": null, "struktur_organisasi_keterangan": ""}},
+  {"model": "konten.unitkerja", "pk": 3, "fields": {"nama": "Direktorat Jaminan Sosial Tenaga Kerja dan Fasilitasi Kesejahteraan Pekerja", "slug": "direktorat-jamsostek-faskesja", "singkatan": "Jamsostek dan Faskesja", "urutan": 3, "deskripsi_beranda": "", "tusi": "", "struktur_organisasi_gambar": null, "struktur_organisasi_keterangan": ""}},
+  {"model": "konten.unitkerja", "pk": 4, "fields": {"nama": "Direktorat Kelembagaan dan Peningkatan Hubungan Industrial", "slug": "direktorat-kpphi", "singkatan": "KPPHI", "urutan": 4, "deskripsi_beranda": "", "tusi": "", "struktur_organisasi_gambar": null, "struktur_organisasi_keterangan": ""}},
+  {"model": "konten.unitkerja", "pk": 5, "fields": {"nama": "Direktorat Penyelesaian Perselisihan Hubungan Industrial", "slug": "direktorat-pphi", "singkatan": "PPHI", "urutan": 5, "deskripsi_beranda": "", "tusi": "", "struktur_organisasi_gambar": null, "struktur_organisasi_keterangan": ""}},
+  {"model": "konten.unitkerja", "pk": 6, "fields": {"nama": "Direktorat Bina Mediasi dan Hubungan Industrial", "slug": "direktorat-bmhi", "singkatan": "BMHI", "urutan": 6, "deskripsi_beranda": "", "tusi": "", "struktur_organisasi_gambar": null, "struktur_organisasi_keterangan": ""}}
+]

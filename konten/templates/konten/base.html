@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Ditjen PHI dan Jamsos{% endblock %} — Kemnaker</title>
+<style>
+  :root {
+    --navy: #16305c;
+    --navy-dark: #0e2144;
+    --blue-light: #eef2f9;
+    --accent: #2f6fed;
+    --text: #1c2530;
+    --muted: #5b6b82;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    color: var(--text);
+    background: #fff;
+  }
+  header.topbar {
+    background: var(--navy);
+    color: #fff;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  header.topbar .brand {
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+  }
+  header.topbar .brand small {
+    display: block;
+    font-weight: 400;
+    font-size: 0.78rem;
+    color: #b9c6de;
+  }
+  nav.mainnav {
+    background: var(--navy-dark);
+  }
+  nav.mainnav ul {
+    list-style: none;
+    display: flex;
+    gap: 4px;
+    margin: 0;
+    padding: 0 28px;
+  }
+  nav.mainnav a {
+    display: block;
+    padding: 12px 18px;
+    color: #dfe6f2;
+    text-decoration: none;
+    font-size: 0.92rem;
+  }
+  nav.mainnav a:hover { background: var(--navy); color: #fff; }
+  main { max-width: 1080px; margin: 0 auto; padding: 36px 28px 60px; min-height: 60vh; }
+  footer {
+    background: var(--blue-light);
+    color: var(--muted);
+    text-align: center;
+    padding: 22px;
+    font-size: 0.85rem;
+    margin-top: 40px;
+  }
+  h1 { color: var(--navy); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    Direktorat Jenderal PHI dan Jamsos
+    <small>Kementerian Ketenagakerjaan Republik Indonesia</small>
+  </div>
+</header>
+<nav class="mainnav">
+  <ul>
+    <li><a href="{% url 'konten:beranda' %}">BERANDA</a></li>
+    <li><a href="{% url 'konten:beranda' %}#unit-kerja">UNIT KERJA</a></li>
+    <li><a href="{% url 'konten:kontak' %}">KONTAK</a></li>
+  </ul>
+</nav>
+<main>
+{% block content %}{% endblock %}
+</main>
+<footer>
+  &copy; {% now "Y" %} Direktorat Jenderal Pembinaan Hubungan Industrial dan Jaminan Sosial Tenaga Kerja — Kemnaker RI
+</footer>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{% extends "konten/base.html" %}
+{% block title %}Beranda{% endblock %}
+{% block content %}
+
+<h1>Direktorat Jenderal PHI dan Jamsos</h1>
+<p>Pembinaan Hubungan Industrial dan Jaminan Sosial Tenaga Kerja — Kementerian Ketenagakerjaan Republik Indonesia.</p>
+
+<section id="unit-kerja" style="margin-top: 36px;">
+  <h2 style="color:#16305c;">Struktur Unit Kerja</h2>
+  <p style="color:#5b6b82;">Klik salah satu unit untuk membuka halamannya.</p>
+
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 20px;">
+    {% for unit in unit_list %}
+    <a href="{% url 'konten:unit_detail' unit.slug %}"
+       style="display:block; background:#eef2f9; border:1px solid #cdd9ec; border-radius:6px;
+              padding:18px; text-decoration:none; color:#16305c; font-weight:600;
+              transition: background 0.15s;">
+      {{ unit.nama }}
+      {% if unit.singkatan %}<div style="font-weight:400; font-size:0.82rem; color:#5b6b82; margin-top:4px;">{{ unit.singkatan }}</div>{% endif %}
+    </a>
+    {% empty %}
+    <p>Unit kerja belum ditambahkan di admin.</p>
+    {% endfor %}
+  </div>
+</section>
+
+{% if berita_terbaru %}
+<section style="margin-top: 44px;">
+  <h2 style="color:#16305c;">Berita Terbaru</h2>
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-top: 16px;">
+    {% for b in berita_terbaru %}
+    <a href="{% url 'konten:berita_detail' b.slug %}" style="text-decoration:none; color:inherit;">
+      <div style="border:1px solid #e2e8f0; border-radius:6px; padding:16px;">
+        <div style="font-size:0.78rem; color:#5b6b82;">{{ b.unit_kerja.nama }} &middot; {{ b.tanggal_publish|date:"d M Y" }}</div>
+        <div style="font-weight:600; color:#16305c; margin-top:6px;">{{ b.judul }}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}
