@@ -9,6 +9,12 @@ class UnitKerja(models.Model):
     nama = models.CharField(max_length=150)
     slug = models.SlugField(max_length=160, unique=True, blank=True)
     singkatan = models.CharField(max_length=30, help_text="Contoh: HKP, KPPHI, PPHI, BMHI")
+    nama_pejabat = models.CharField(
+        max_length=150, blank=True, help_text="Nama pejabat yang menjabat (tampil di bagan struktur beranda)"
+    )
+    jabatan = models.CharField(
+        max_length=100, blank=True, help_text="Contoh: Sekretaris Ditjen PHI-JSK, Direktur Bina Mediator..."
+    )
     urutan = models.PositiveIntegerField(
         default=0, help_text="Urutan tampil di bagan struktur beranda"
     )
@@ -111,3 +117,28 @@ class UnitAdminProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} -> {self.unit_kerja.nama}"
+
+
+class ProfilDitjen(models.Model):
+    """Satu baris saja — teks definisi & tupoksi Ditjen yang tampil di panel beranda."""
+
+    nama_dirjen = models.CharField(
+        max_length=150, blank=True, help_text="Nama pejabat Direktur Jenderal (tampil di puncak bagan)"
+    )
+    paragraf_1 = models.TextField(
+        blank=True, help_text="Paragraf definisi Ditjen (kalimat pertama panel beranda)"
+    )
+    paragraf_2 = models.TextField(
+        blank=True, help_text="Paragraf kedua (tentang kepemimpinan Ditjen)"
+    )
+    tupoksi = models.TextField(
+        blank=True,
+        help_text="Daftar tugas dan fungsi (a, b, c, ...) — tulis lengkap dengan huruf, satu poin per baris",
+    )
+
+    class Meta:
+        verbose_name = "Profil Ditjen"
+        verbose_name_plural = "Profil Ditjen"
+
+    def __str__(self):
+        return "Profil Ditjen PHI dan Jamsos (Beranda)"

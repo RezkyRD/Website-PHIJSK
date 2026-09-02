@@ -1,23 +1,65 @@
 from django.shortcuts import render, get_object_or_404
-from .models import UnitKerja, Berita, Kontak
+from .models import UnitKerja, Berita, Kontak, ProfilDitjen
 
 
 def beranda(request):
-    """Halaman utama Ditjen — memuat bagan struktur unit yang bisa diklik."""
-    unit_list = UnitKerja.objects.all()
-    berita_terbaru = Berita.objects.filter(status="published")[:6]
+    """Halaman utama Ditjen — hero foto gedung, panel profil/tupoksi (akordion), bagan struktur."""
+    unit_list = list(UnitKerja.objects.all())
+    sekretariat = unit_list[0] if unit_list else None
+    direktorat = unit_list[1:] if len(unit_list) > 1 else []
+    profil = ProfilDitjen.objects.first()
+
+    # Judul singkat tiap poin tupoksi a-g, ditampilkan di baris akordion (tertutup).
+    # Teks lengkap dari admin tetap yang tampil saat akordion dibuka.
+    tupoksi_short_titles = [
+        "Perumusan kebijakan",
+        "Pelaksanaan kebijakan",
+        "Penyusunan norma, standar, prosedur dan kriteria",
+        "Pemberian bimbingan teknis dan supervisi",
+        "Pelaksanaan evaluasi dan pelaporan",
+        "Pelaksanaan administrasi",
+        "Pelaksanaan fungsi lain yang diberikan oleh Menteri",
+    ]
+
+    tupoksi_intro = ""
+    tupoksi_items = []
+    if profil and profil.tupoksi:
+        parts = [p.strip() for p in profil.tupoksi.split("\n\n") if p.strip()]
+        if parts:
+            tupoksi_intro = parts[0]
+            points = parts[1:]
+            for i, point in enumerate(points):
+                letter = chr(ord("a") + i)
+                if i < len(tupoksi_short_titles):
+                    title = tupoksi_short_titles[i]
+                else:
+                    title = point[:60]
+                tupoksi_items.append({"letter": letter, "title": title, "full": point})
+
     return render(
         request,
         "konten/beranda.html",
-        {"unit_list": unit_list, "berita_terbaru": berita_terbaru},
+        {
+            "sekretariat": sekretariat,
+            "direktorat": direktorat,
+            "profil": profil,
+            "tupoksi_intro": tupoksi_intro,
+            "tupoksi_items": tupoksi_items,
+        },
     )
 
 
+def unit_list(request):
+    """Halaman daftar Unit Kerja — navigasi untuk memilih direktorat."""
+    unit_list = UnitKerja.objects.all()
+    return render(request, "konten/unit_list.html", {"unit_list": unit_list})
+
+
 def unit_detail(request, slug):
-    """Halaman unit kerja dengan 4 tab: Beranda, Berita, Tusi, Struktur Organisasi."""
+    """Halaman unit kerja dengan 2 tab: Beranda (Tusi + Struktur) dan Berita."""
     unit = get_object_or_404(UnitKerja, slug=slug)
     tab = request.GET.get("tab", "beranda")
-    if tab not in {"beranda", "berita", "tusi", "struktur"}:
+    if tab not in {"beranda", "berita"}:
         tab = "beranda"
 
     berita_list = None
@@ -27,8 +69,6 @@ def unit_detail(request, slug):
     tabs = [
         ("beranda", "BERANDA"),
         ("berita", "BERITA"),
-        ("tusi", "TUSI"),
-        ("struktur", "STRUKTUR ORGANISASI"),
     ]
     return render(
         request,

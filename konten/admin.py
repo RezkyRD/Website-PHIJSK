@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UnitKerja, Berita, Kontak, UnitAdminProfile
+from .models import UnitKerja, Berita, Kontak, UnitAdminProfile, ProfilDitjen
 
 
 def get_user_unit(user):
@@ -64,14 +64,13 @@ class UnitScopedAdminMixin:
 
 @admin.register(UnitKerja)
 class UnitKerjaAdmin(UnitScopedAdminMixin, admin.ModelAdmin):
-    list_display = ("nama", "singkatan", "urutan")
+    list_display = ("nama", "singkatan", "nama_pejabat", "urutan")
     prepopulated_fields = {"slug": ("nama",)}
     fieldsets = (
         (None, {"fields": ("nama", "slug", "singkatan", "urutan")}),
-        ("Tab Beranda Unit", {"fields": ("deskripsi_beranda",)}),
-        ("Tab Tusi", {"fields": ("tusi",)}),
-        ("Tab Struktur Organisasi", {
-            "fields": ("struktur_organisasi_gambar", "struktur_organisasi_keterangan")
+        ("Bagan struktur (beranda Ditjen)", {"fields": ("nama_pejabat", "jabatan")}),
+        ("Tab Beranda Unit (Tusi & Struktur)", {
+            "fields": ("deskripsi_beranda", "tusi", "struktur_organisasi_gambar", "struktur_organisasi_keterangan")
         }),
     )
 
@@ -113,3 +112,14 @@ class UnitAdminProfileAdmin(admin.ModelAdmin):
 
     def has_module_permission(self, request):
         return request.user.is_superuser
+
+
+@admin.register(ProfilDitjen)
+class ProfilDitjenAdmin(admin.ModelAdmin):
+    # Teks definisi & tupoksi Ditjen: hanya superuser yang mengelola (konten level-Ditjen, bukan per unit)
+    def has_module_permission(self, request):
+        return request.user.is_superuser
+
+    def has_add_permission(self, request):
+        # cegah lebih dari satu baris profil
+        return request.user.is_superuser and not ProfilDitjen.objects.exists()

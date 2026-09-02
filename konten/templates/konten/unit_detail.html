@@ -2,6 +2,9 @@
 {% block title %}{{ unit.nama }}{% endblock %}
 {% block content %}
 
+<p style="font-size:0.85rem; margin-bottom:6px;">
+  <a href="{% url 'konten:unit_list' %}">&larr; Unit Kerja</a>
+</p>
 <h1>{{ unit.nama }}</h1>
 
 <div style="border-bottom: 2px solid #e2e8f0; display:flex; gap: 4px; margin-bottom: 26px;">
@@ -17,9 +20,24 @@
 
 {% if tab == "beranda" %}
   {% if unit.deskripsi_beranda %}
-    <div style="white-space: pre-line; line-height:1.6;">{{ unit.deskripsi_beranda }}</div>
-  {% else %}
-    <p style="color:#5b6b82;">Belum ada deskripsi untuk unit ini.</p>
+    <div style="white-space: pre-line; line-height:1.6; margin-bottom: 30px;">{{ unit.deskripsi_beranda }}</div>
+  {% endif %}
+
+  {% if unit.tusi %}
+  <h2 style="color:#16305c; font-size:1.15rem; margin-bottom:8px;">Tugas dan Fungsi</h2>
+  <div style="white-space: pre-line; line-height:1.6; margin-bottom: 32px;">{{ unit.tusi }}</div>
+  {% endif %}
+
+  <h2 style="color:#16305c; font-size:1.15rem; margin-bottom:8px;">Struktur Organisasi</h2>
+  {% if unit.struktur_organisasi_gambar %}
+    <img src="{{ unit.struktur_organisasi_gambar.url }}" alt="Struktur Organisasi {{ unit.nama }}"
+         style="max-width:100%; border:1px solid #e2e8f0; border-radius:6px;">
+  {% endif %}
+  {% if unit.struktur_organisasi_keterangan %}
+    <div style="white-space: pre-line; line-height:1.6; margin-top:16px;">{{ unit.struktur_organisasi_keterangan }}</div>
+  {% endif %}
+  {% if not unit.deskripsi_beranda and not unit.tusi and not unit.struktur_organisasi_gambar and not unit.struktur_organisasi_keterangan %}
+    <p style="color:#5b6b82;">Konten unit ini belum diisi di admin.</p>
   {% endif %}
 
 {% elif tab == "berita" %}
@@ -36,25 +54,6 @@
     </div>
   {% else %}
     <p style="color:#5b6b82;">Belum ada berita untuk unit ini.</p>
-  {% endif %}
-
-{% elif tab == "tusi" %}
-  {% if unit.tusi %}
-    <div style="white-space: pre-line; line-height:1.6;">{{ unit.tusi }}</div>
-  {% else %}
-    <p style="color:#5b6b82;">Tugas dan fungsi belum diisi.</p>
-  {% endif %}
-
-{% elif tab == "struktur" %}
-  {% if unit.struktur_organisasi_gambar %}
-    <img src="{{ unit.struktur_organisasi_gambar.url }}" alt="Struktur Organisasi {{ unit.nama }}"
-         style="max-width:100%; border:1px solid #e2e8f0; border-radius:6px;">
-  {% endif %}
-  {% if unit.struktur_organisasi_keterangan %}
-    <div style="white-space: pre-line; line-height:1.6; margin-top:16px;">{{ unit.struktur_organisasi_keterangan }}</div>
-  {% endif %}
-  {% if not unit.struktur_organisasi_gambar and not unit.struktur_organisasi_keterangan %}
-    <p style="color:#5b6b82;">Struktur organisasi belum diunggah.</p>
   {% endif %}
 {% endif %}
 

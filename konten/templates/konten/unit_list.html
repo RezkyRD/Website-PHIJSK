@@ -1,0 +1,36 @@
+{% extends "konten/base.html" %}
+{% block title %}Unit Kerja{% endblock %}
+{% block content %}
+
+<h1>Unit Kerja</h1>
+<p style="color: var(--muted); max-width:640px;">
+  Direktorat Jenderal PHI dan Jamsos membawahi enam unit kerja. Pilih salah satu untuk melihat
+  tugas &amp; fungsi, struktur organisasi, dan berita terkini dari unit tersebut.
+</p>
+
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-top: 30px;">
+  {% for unit in unit_list %}
+  <a href="{% url 'konten:unit_detail' unit.slug %}"
+     style="display:block; text-decoration:none; color:inherit; background:#fff;
+            border:1px solid #e2e8f0; border-left:5px solid var(--navy); border-radius:6px;
+            padding:22px; transition: box-shadow 0.15s, transform 0.15s;
+            box-shadow: 0 1px 3px rgba(22,48,92,0.08);">
+    <div style="font-size:0.76rem; font-weight:700; color: var(--accent); letter-spacing:0.03em; margin-bottom:8px;">
+      {{ unit.singkatan }}
+    </div>
+    <div style="font-weight:700; color: var(--navy); font-size:1.05rem; line-height:1.4;">
+      {{ unit.nama }}
+    </div>
+    {% if unit.jabatan %}
+    <div style="color: var(--muted); font-size:0.82rem; margin-top:10px;">{{ unit.jabatan }}</div>
+    {% endif %}
+    <div style="margin-top:16px; color: var(--accent); font-size:0.85rem; font-weight:600;">
+      Lihat unit &rarr;
+    </div>
+  </a>
+  {% empty %}
+  <p>Unit kerja belum ditambahkan di admin.</p>
+  {% endfor %}
+</div>
+
+{% endblock %}
