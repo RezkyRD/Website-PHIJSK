@@ -2,17 +2,27 @@
 {% block title %}{{ berita.judul }}{% endblock %}
 {% block content %}
 
-<p style="font-size:0.85rem;"><a href="{% url 'konten:unit_detail' berita.unit_kerja.slug %}">&larr; {{ berita.unit_kerja.nama }}</a></p>
+<div style="font-size:0.82rem; color:#5b6b82; margin-bottom:18px;">
+  <a href="{% url 'konten:unit_list' %}" style="color:#5b6b82; text-decoration:none;">Unit Kerja</a>
+  <span style="margin:0 6px;">&rsaquo;</span>
+  <a href="{% url 'konten:unit_detail' berita.unit_kerja.slug %}?tab=berita" style="color:#5b6b82; text-decoration:none;">{{ berita.unit_kerja.singkatan }}</a>
+</div>
 
-<h1>{{ berita.judul }}</h1>
-<div style="color:#5b6b82; font-size:0.85rem; margin-bottom:20px;">
-  {{ berita.unit_kerja.nama }} &middot; {{ berita.tanggal_publish|date:"d F Y" }}
+<h1 style="font-size:1.7rem; line-height:1.35; max-width:760px; margin:0 0 14px;">{{ berita.judul }}</h1>
+
+<div style="font-size:0.85rem; color:#5b6b82; margin-bottom:22px;">
+  {{ berita.unit_kerja.nama }}<br>
+  {{ berita.tanggal_publish|date:"l, d F Y" }} &middot; {{ berita.tanggal_publish|date:"H:i" }} WIB
 </div>
 
 {% if berita.gambar %}
-<img src="{{ berita.gambar.url }}" alt="{{ berita.judul }}" style="max-width:100%; border-radius:6px; margin-bottom:20px;">
+<img src="{{ berita.gambar.url }}" alt="{{ berita.judul }}" style="width:100%; max-width:100%; display:block;">
+<div style="font-size:0.78rem; color:#8a94a6; background:#f4f6f9; padding:8px 12px; margin-bottom:26px;">
+  Foto: {{ berita.unit_kerja.nama }}
+</div>
 {% endif %}
 
-<div style="white-space: pre-line; line-height:1.7;">{{ berita.isi }}</div>
+<div style="white-space: pre-line; line-height:1.8; max-width:760px; font-size:1rem;">{{ berita.isi }}</div>
 
 {% endblock %}
+

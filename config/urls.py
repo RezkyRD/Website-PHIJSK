@@ -24,5 +24,7 @@ urlpatterns = [
     path('', include('konten.urls')),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Foto/berkas upload (media) selalu dilayani, termasuk saat DEBUG=False di produksi.
+# Untuk situs skala kecil ini caranya cukup memadai; kalau traffic-nya besar nanti,
+# sebaiknya pindah ke penyimpanan cloud terpisah (S3-compatible dsb).
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -42,12 +42,23 @@
 
 {% elif tab == "berita" %}
   {% if berita_list %}
-    <div style="display:grid; gap:16px;">
+    <div style="border-top: 1px solid #e2e8f0;">
       {% for b in berita_list %}
-      <a href="{% url 'konten:berita_detail' b.slug %}" style="text-decoration:none; color:inherit;">
-        <div style="border:1px solid #e2e8f0; border-radius:6px; padding:16px;">
-          <div style="font-size:0.78rem; color:#5b6b82;">{{ b.tanggal_publish|date:"d M Y" }}</div>
-          <div style="font-weight:600; color:#16305c; margin-top:4px;">{{ b.judul }}</div>
+      <a href="{% url 'konten:berita_detail' b.slug %}"
+         style="display:flex; gap:18px; text-decoration:none; color:inherit; padding:18px 0; border-bottom:1px solid #e2e8f0;">
+        {% if b.gambar %}
+        <div style="flex-shrink:0; width:180px; height:110px; border-radius:4px; overflow:hidden; background:#eef2f9;">
+          <img src="{{ b.gambar.url }}" alt="{{ b.judul }}" style="width:100%; height:100%; object-fit:cover; display:block;">
+        </div>
+        {% else %}
+        <div style="flex-shrink:0; width:180px; height:110px; border-radius:4px; background:#eef2f9;
+                    display:flex; align-items:center; justify-content:center; color:#9fb0c9; font-size:0.75rem;">
+          Tanpa foto
+        </div>
+        {% endif %}
+        <div style="min-width:0;">
+          <div style="font-weight:700; color:#16305c; font-size:1.02rem; line-height:1.4;">{{ b.judul }}</div>
+          <div style="font-size:0.8rem; color:#5b6b82; margin-top:8px;">{{ b.tanggal_publish|timesince }} yang lalu</div>
         </div>
       </a>
       {% endfor %}
