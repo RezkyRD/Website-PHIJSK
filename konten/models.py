@@ -48,6 +48,39 @@ class UnitKerja(models.Model):
     def __str__(self):
         return self.nama
 
+    def tim_kerja_utama(self):
+        """Daftar Ketua Tim Kerja (level atas) beserta Wakil Ketua di bawahnya masing-masing."""
+        return self.tim_kerja_list.filter(induk__isnull=True).prefetch_related("anggota")
+
+
+class TimKerja(models.Model):
+    """
+    Struktur tim kerja internal per unit — 2 level pakai relasi ke diri sendiri:
+    - induk kosong -> ini "Ketua Tim Kerja" (level atas)
+    - induk terisi -> ini "Wakil Ketua Tim Kerja", anak dari salah satu baris di atas
+    Digambar sebagai bagan (bukan gambar statis) di tab Beranda unit, dan bisa diedit
+    langsung di halaman admin Unit Kerja (inline) tanpa perlu bikin ulang gambar PowerPoint.
+    """
+
+    unit_kerja = models.ForeignKey(UnitKerja, on_delete=models.CASCADE, related_name="tim_kerja_list")
+    induk = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="anggota",
+        help_text="Kosongkan untuk Ketua Tim Kerja. Isi (pilih Ketua Tim Kerja yang sesuai) untuk Wakil Ketua.",
+    )
+    label = models.CharField(
+        max_length=255,
+        help_text="Contoh: 'Ketua Tim Kerja pembinaan hubungan kerja' atau 'wakil ketua Tim Kerja bidang ...'",
+    )
+    urutan = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        verbose_name = "Tim Kerja"
+        verbose_name_plural = "Tim Kerja"
+        ordering = ["urutan", "id"]
+
+    def __str__(self):
+        return f"{self.unit_kerja.singkatan} — {self.label}"
+
 
 class Berita(models.Model):
     STATUS_CHOICES = [

@@ -29,14 +29,33 @@
   {% endif %}
 
   <h2 style="color:#16305c; font-size:1.15rem; margin-bottom:8px;">Struktur Organisasi</h2>
-  {% if unit.struktur_organisasi_gambar %}
+  {% if tim_kerja_utama %}
+    <style>
+      .tk-row { display:flex; gap:14px; flex-wrap:wrap; margin-top:16px; }
+      .tk-col { display:flex; flex-direction:column; align-items:center; }
+      .tk-ketua { background:#16305c; color:#fff; border-radius:6px; padding:10px 14px; text-align:center; width:190px; font-size:0.82rem; font-weight:600; }
+      .tk-connector { width:2px; height:14px; background:#cdd9ec; }
+      .tk-wakil { background:#eef2f9; border:1px solid #cdd9ec; border-radius:6px; padding:9px 12px; text-align:center; width:190px; font-size:0.76rem; color:#374863; margin-top:10px; }
+    </style>
+    <div class="tk-row">
+      {% for ketua in tim_kerja_utama %}
+      <div class="tk-col">
+        <div class="tk-ketua">{{ ketua.label }}</div>
+        {% for wakil in ketua.anggota.all %}
+        <div class="tk-connector"></div>
+        <div class="tk-wakil">{{ wakil.label }}</div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  {% elif unit.struktur_organisasi_gambar %}
     <img src="{{ unit.struktur_organisasi_gambar.url }}" alt="Struktur Organisasi {{ unit.nama }}"
          style="max-width:100%; border:1px solid #e2e8f0; border-radius:6px;">
   {% endif %}
   {% if unit.struktur_organisasi_keterangan %}
     <div style="white-space: pre-line; line-height:1.6; margin-top:16px;">{{ unit.struktur_organisasi_keterangan }}</div>
   {% endif %}
-  {% if not unit.deskripsi_beranda and not unit.tusi and not unit.struktur_organisasi_gambar and not unit.struktur_organisasi_keterangan %}
+  {% if not unit.deskripsi_beranda and not unit.tusi and not tim_kerja_utama and not unit.struktur_organisasi_gambar and not unit.struktur_organisasi_keterangan %}
     <p style="color:#5b6b82;">Konten unit ini belum diisi di admin.</p>
   {% endif %}
 

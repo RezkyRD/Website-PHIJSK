@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UnitKerja, Berita, Kontak, UnitAdminProfile, ProfilDitjen
+from .models import UnitKerja, Berita, Kontak, UnitAdminProfile, ProfilDitjen, TimKerja
 
 
 def get_user_unit(user):
@@ -62,6 +62,29 @@ class UnitScopedAdminMixin:
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+class TimKerjaInline(admin.TabularInline):
+    """
+    Diisi langsung di halaman edit Unit Kerja. Untuk baris Ketua Tim Kerja, biarkan
+    'Induk' kosong. Untuk Wakil Ketua, pilih Ketua Tim Kerja terkait di kolom 'Induk'.
+    """
+    model = TimKerja
+    fk_name = "unit_kerja"
+    extra = 1
+    fields = ("label", "induk", "urutan")
+    verbose_name = "Tim Kerja"
+    verbose_name_plural = "Tim Kerja (Ketua & Wakil Ketua)"
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        # Batasi pilihan "Induk" hanya ke Tim Kerja level-atas milik unit yang sama
+        if db_field.name == "induk":
+            parent_id = request.resolver_match.kwargs.get("object_id")
+            qs = TimKerja.objects.filter(induk__isnull=True)
+            if parent_id:
+                qs = qs.filter(unit_kerja_id=parent_id)
+            kwargs["queryset"] = qs
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
 @admin.register(UnitKerja)
 class UnitKerjaAdmin(UnitScopedAdminMixin, admin.ModelAdmin):
     list_display = ("nama", "singkatan", "nama_pejabat", "urutan")
@@ -70,9 +93,12 @@ class UnitKerjaAdmin(UnitScopedAdminMixin, admin.ModelAdmin):
         (None, {"fields": ("nama", "slug", "singkatan", "urutan")}),
         ("Bagan struktur (beranda Ditjen)", {"fields": ("nama_pejabat", "jabatan")}),
         ("Tab Beranda Unit (Tusi & Struktur)", {
-            "fields": ("deskripsi_beranda", "tusi", "struktur_organisasi_gambar", "struktur_organisasi_keterangan")
+            "fields": ("deskripsi_beranda", "tusi", "struktur_organisasi_gambar", "struktur_organisasi_keterangan"),
+            "description": "Gambar & keterangan di sini cuma dipakai kalau daftar Tim Kerja di bawah masih kosong — "
+                           "begitu ada Tim Kerja, bagan otomatis dibuat dari data itu, gambar tidak dipakai lagi.",
         }),
     )
+    inlines = [TimKerjaInline]
 
     def has_add_permission(self, request):
         # Hanya superuser yang boleh menambah/menghapus unit baru (struktur ditjen)

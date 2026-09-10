@@ -35,8 +35,11 @@ def unit_detail(request, slug):
         tab = "beranda"
 
     berita_list = None
+    tim_kerja_utama = None
     if tab == "berita":
         berita_list = unit.berita_list.filter(status="published")
+    else:
+        tim_kerja_utama = unit.tim_kerja_utama()
 
     tabs = [
         ("beranda", "BERANDA"),
@@ -45,7 +48,7 @@ def unit_detail(request, slug):
     return render(
         request,
         "konten/unit_detail.html",
-        {"unit": unit, "tab": tab, "berita_list": berita_list, "tabs": tabs},
+        {"unit": unit, "tab": tab, "berita_list": berita_list, "tim_kerja_utama": tim_kerja_utama, "tabs": tabs},
     )
 
 
