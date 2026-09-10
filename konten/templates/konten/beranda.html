@@ -69,7 +69,7 @@
     </div>
 
     <!-- Garis batang lurus ke bawah, dengan Sekretariat bercabang ke samping di tengah -->
-    <div style="position:relative; width:2px; height:64px; background:#cdd9ec;">
+    <div style="position:relative; width:2px; height:110px; background:#cdd9ec;">
       {% if sekretariat %}
       <div style="position:absolute; top:50%; right:50%; transform:translateY(-50%); display:flex; align-items:center;">
         <a href="{% url 'konten:unit_detail' sekretariat.slug %}"
@@ -78,7 +78,7 @@
           <div style="font-weight:700; font-size:0.84rem;">{% if sekretariat.nama_pejabat %}{{ sekretariat.nama_pejabat }}{% else %}{{ sekretariat.singkatan }}{% endif %}</div>
           <div style="font-size:0.72rem; color:var(--muted); margin-top:3px;">{{ sekretariat.jabatan|default:sekretariat.nama }}</div>
         </a>
-        <div style="width:32px; height:2px; background:#cdd9ec;"></div>
+        <div style="width:40px; height:2px; background:#cdd9ec;"></div>
       </div>
       {% endif %}
     </div>
