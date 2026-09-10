@@ -15,9 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
-from django.conf.urls.static import static
+from django.views.static import serve as static_serve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +25,12 @@ urlpatterns = [
 ]
 
 # Foto/berkas upload (media) selalu dilayani, termasuk saat DEBUG=False di produksi.
+# CATATAN: django.conf.urls.static.static() TIDAK dipakai di sini karena fungsi itu
+# secara internal no-op (tidak menambah rute apa pun) kalau settings.DEBUG=False,
+# apa pun kondisinya di kode kita. Jadi kita panggil view serve() langsung, melewati
+# pengecekan DEBUG bawaan itu.
 # Untuk situs skala kecil ini caranya cukup memadai; kalau traffic-nya besar nanti,
 # sebaiknya pindah ke penyimpanan cloud terpisah (S3-compatible dsb).
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', static_serve, {'document_root': settings.MEDIA_ROOT}),
+]
