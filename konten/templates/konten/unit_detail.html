@@ -42,16 +42,24 @@
 
 {% elif tab == "berita" %}
   {% if berita_list %}
+    <style>
+      .berita-item { display:flex; gap:18px; }
+      .berita-thumb { flex-shrink:0; width:180px; height:110px; }
+      @media (max-width: 560px) {
+        .berita-item { flex-direction:column; gap:10px; }
+        .berita-thumb { width:100%; height:auto; aspect-ratio:16/9; }
+      }
+    </style>
     <div style="border-top: 1px solid #e2e8f0;">
       {% for b in berita_list %}
-      <a href="{% url 'konten:berita_detail' b.slug %}"
-         style="display:flex; gap:18px; text-decoration:none; color:inherit; padding:18px 0; border-bottom:1px solid #e2e8f0;">
+      <a href="{% url 'konten:berita_detail' b.slug %}" class="berita-item"
+         style="text-decoration:none; color:inherit; padding:18px 0; border-bottom:1px solid #e2e8f0;">
         {% if b.gambar %}
-        <div style="flex-shrink:0; width:180px; height:110px; border-radius:4px; overflow:hidden; background:#eef2f9; display:flex; align-items:center; justify-content:center;">
+        <div class="berita-thumb" style="border-radius:4px; overflow:hidden; background:#eef2f9; display:flex; align-items:center; justify-content:center;">
           <img src="{{ b.gambar.url }}" alt="{{ b.judul }}" style="width:100%; height:100%; object-fit:contain; display:block;">
         </div>
         {% else %}
-        <div style="flex-shrink:0; width:180px; height:110px; border-radius:4px; background:#eef2f9;
+        <div class="berita-thumb" style="border-radius:4px; background:#eef2f9;
                     display:flex; align-items:center; justify-content:center; color:#9fb0c9; font-size:0.75rem;">
           Tanpa foto
         </div>
