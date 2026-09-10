@@ -55,8 +55,8 @@
       <a href="{% url 'konten:berita_detail' b.slug %}" class="berita-item"
          style="text-decoration:none; color:inherit; padding:18px 0; border-bottom:1px solid #e2e8f0;">
         {% if b.gambar %}
-        <div class="berita-thumb" style="border-radius:4px; overflow:hidden; background:#eef2f9; display:flex; align-items:center; justify-content:center;">
-          <img src="{{ b.gambar.url }}" alt="{{ b.judul }}" style="width:100%; height:100%; object-fit:contain; display:block;">
+        <div class="berita-thumb" style="border-radius:4px; overflow:hidden; background:#eef2f9;">
+          <img src="{{ b.gambar.url }}" alt="{{ b.judul }}" style="width:100%; height:100%; object-fit:cover; display:block;">
         </div>
         {% else %}
         <div class="berita-thumb" style="border-radius:4px; background:#eef2f9;
