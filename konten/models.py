@@ -131,10 +131,17 @@ class ProfilDitjen(models.Model):
     paragraf_2 = models.TextField(
         blank=True, help_text="Paragraf kedua (tentang kepemimpinan Ditjen)"
     )
-    tupoksi = models.TextField(
-        blank=True,
-        help_text="Daftar tugas dan fungsi (a, b, c, ...) — tulis lengkap dengan huruf, satu poin per baris",
+    tupoksi_pembuka = models.CharField(
+        max_length=300, blank=True,
+        help_text="Kalimat pembuka sebelum daftar poin, contoh: '...menyelenggarakan fungsi:'",
     )
+    tupoksi_a = models.TextField("Tupoksi — poin a", blank=True)
+    tupoksi_b = models.TextField("Tupoksi — poin b", blank=True)
+    tupoksi_c = models.TextField("Tupoksi — poin c", blank=True)
+    tupoksi_d = models.TextField("Tupoksi — poin d", blank=True)
+    tupoksi_e = models.TextField("Tupoksi — poin e", blank=True)
+    tupoksi_f = models.TextField("Tupoksi — poin f", blank=True)
+    tupoksi_g = models.TextField("Tupoksi — poin g", blank=True)
 
     class Meta:
         verbose_name = "Profil Ditjen"
@@ -142,3 +149,22 @@ class ProfilDitjen(models.Model):
 
     def __str__(self):
         return "Profil Ditjen PHI dan Jamsos (Beranda)"
+
+    def tupoksi_items(self):
+        """Daftar poin tupoksi yang terisi, masing-masing sudah punya huruf (a, b, c, ...) sendiri.
+        Setiap poin tersimpan di field terpisah, jadi tidak bisa tercampur akibat editan admin."""
+        judul_singkat = {
+            "a": "Perumusan kebijakan",
+            "b": "Pelaksanaan kebijakan",
+            "c": "Penyusunan norma, standar, prosedur dan kriteria",
+            "d": "Pemberian bimbingan teknis dan supervisi",
+            "e": "Pelaksanaan evaluasi dan pelaporan",
+            "f": "Pelaksanaan administrasi",
+            "g": "Pelaksanaan fungsi lain yang diberikan oleh Menteri",
+        }
+        items = []
+        for huruf in "abcdefg":
+            isi = getattr(self, f"tupoksi_{huruf}")
+            if isi:
+                items.append({"letter": huruf, "title": judul_singkat[huruf], "full": isi})
+        return items

@@ -117,6 +117,16 @@ class UnitAdminProfileAdmin(admin.ModelAdmin):
 @admin.register(ProfilDitjen)
 class ProfilDitjenAdmin(admin.ModelAdmin):
     # Teks definisi & tupoksi Ditjen: hanya superuser yang mengelola (konten level-Ditjen, bukan per unit)
+    fieldsets = (
+        ("Panel pembuka beranda", {"fields": ("nama_dirjen", "paragraf_1", "paragraf_2")}),
+        ("Tupoksi — kalimat pembuka", {"fields": ("tupoksi_pembuka",)}),
+        ("Tupoksi — isi tiap poin (kosongkan yang tidak dipakai)", {
+            "fields": ("tupoksi_a", "tupoksi_b", "tupoksi_c", "tupoksi_d", "tupoksi_e", "tupoksi_f", "tupoksi_g"),
+            "description": "Setiap poin (a-g) tampil sebagai akordion terpisah di beranda. "
+                           "Tulis teks lengkapnya di sini tanpa perlu awalan huruf — huruf ditambahkan otomatis.",
+        }),
+    )
+
     def has_module_permission(self, request):
         return request.user.is_superuser
 

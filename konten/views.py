@@ -9,33 +9,6 @@ def beranda(request):
     direktorat = unit_list[1:] if len(unit_list) > 1 else []
     profil = ProfilDitjen.objects.first()
 
-    # Judul singkat tiap poin tupoksi a-g, ditampilkan di baris akordion (tertutup).
-    # Teks lengkap dari admin tetap yang tampil saat akordion dibuka.
-    tupoksi_short_titles = [
-        "Perumusan kebijakan",
-        "Pelaksanaan kebijakan",
-        "Penyusunan norma, standar, prosedur dan kriteria",
-        "Pemberian bimbingan teknis dan supervisi",
-        "Pelaksanaan evaluasi dan pelaporan",
-        "Pelaksanaan administrasi",
-        "Pelaksanaan fungsi lain yang diberikan oleh Menteri",
-    ]
-
-    tupoksi_intro = ""
-    tupoksi_items = []
-    if profil and profil.tupoksi:
-        parts = [p.strip() for p in profil.tupoksi.split("\n\n") if p.strip()]
-        if parts:
-            tupoksi_intro = parts[0]
-            points = parts[1:]
-            for i, point in enumerate(points):
-                letter = chr(ord("a") + i)
-                if i < len(tupoksi_short_titles):
-                    title = tupoksi_short_titles[i]
-                else:
-                    title = point[:60]
-                tupoksi_items.append({"letter": letter, "title": title, "full": point})
-
     return render(
         request,
         "konten/beranda.html",
@@ -43,8 +16,7 @@ def beranda(request):
             "sekretariat": sekretariat,
             "direktorat": direktorat,
             "profil": profil,
-            "tupoksi_intro": tupoksi_intro,
-            "tupoksi_items": tupoksi_items,
+            "tupoksi_items": profil.tupoksi_items() if profil else [],
         },
     )
 
