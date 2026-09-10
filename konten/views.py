@@ -4,14 +4,17 @@ from .models import UnitKerja, Berita, Kontak, ProfilDitjen
 
 def beranda(request):
     """Halaman utama Ditjen — hero foto gedung, panel profil/tupoksi (akordion), bagan struktur."""
-    semua_unit = list(UnitKerja.objects.all())
+    unit_list = list(UnitKerja.objects.all())
+    sekretariat = unit_list[0] if unit_list else None
+    direktorat = unit_list[1:] if len(unit_list) > 1 else []
     profil = ProfilDitjen.objects.first()
 
     return render(
         request,
         "konten/beranda.html",
         {
-            "semua_unit": semua_unit,
+            "sekretariat": sekretariat,
+            "direktorat": direktorat,
             "profil": profil,
             "tupoksi_items": profil.tupoksi_items() if profil else [],
         },
