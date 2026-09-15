@@ -133,6 +133,7 @@ class Kontak(models.Model):
     twitter_x = models.URLField("X (Twitter)", blank=True, help_text="Link lengkap, contoh: https://x.com/kemnaker")
     youtube = models.URLField(blank=True, help_text="Link lengkap, contoh: https://youtube.com/@kemnaker")
     tiktok = models.URLField(blank=True, help_text="Link lengkap, contoh: https://tiktok.com/@kemnaker")
+    whatsapp_group = models.URLField("Grup WhatsApp", blank=True, help_text="Link undangan grup, contoh: https://chat.whatsapp.com/xxxxxxxxxxxxx")
 
     class Meta:
         verbose_name = "Kontak"
@@ -149,6 +150,7 @@ class Kontak(models.Model):
             ("twitter_x", self.twitter_x, "X (Twitter)", "#000000"),
             ("youtube", self.youtube, "YouTube", "#FF0000"),
             ("tiktok", self.tiktok, "TikTok", "#000000"),
+            ("whatsapp_group", self.whatsapp_group, "Grup WhatsApp", "#25D366"),
         ]
         return [
             {"key": key, "url": url, "label": label, "color": color}

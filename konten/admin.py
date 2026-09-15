@@ -127,7 +127,7 @@ class KontakAdmin(admin.ModelAdmin):
     fieldsets = (
         ("Informasi Kontak", {"fields": ("alamat", "telepon", "email", "jam_operasional")}),
         ("Media Sosial (kosongkan yang tidak dipakai)", {
-            "fields": ("instagram", "facebook", "twitter_x", "youtube", "tiktok"),
+            "fields": ("instagram", "facebook", "twitter_x", "youtube", "tiktok", "whatsapp_group"),
             "description": "Isi dengan link lengkap (termasuk https://). Yang kosong tidak akan tampil di halaman Kontak.",
         }),
     )
