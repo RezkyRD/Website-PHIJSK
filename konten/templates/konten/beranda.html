@@ -79,6 +79,8 @@
   <style>
     .org-outer { display:flex; flex-direction:column; align-items:center; margin-top:30px; }
     .org-root { background: var(--navy); color:#fff; border-radius:6px; padding:14px 22px; text-align:center; min-width:220px; }
+    .org-sesditjen { display:block; text-decoration:none; background:#eef2f9; border:1px solid #cdd9ec; border-radius:6px;
+                     padding:12px 18px; text-align:center; min-width:200px; color:var(--navy); }
     .org-stem { width:2px; height:20px; background:#7a93bd; }
     .org-bar-full { width:100%; border-top:2px solid #7a93bd; }
     .org-scroll { display:flex; overflow-x:auto; width:100%; padding-bottom:10px; }
@@ -94,21 +96,22 @@
       <div style="font-weight:700; font-size:0.92rem;">{% if profil.nama_dirjen %}{{ profil.nama_dirjen }}{% else %}Direktur Jenderal{% endif %}</div>
       <div style="font-size:0.76rem; color:#b9c6de; margin-top:4px;">Direktur Jenderal PHI dan Jamsos</div>
     </div>
+
+    {% if sekretariat %}
+    <div class="org-stem"></div>
+    <!-- Sesditjen sebagai satu tingkat tersendiri, di antara Dirjen dan baris Direktorat -->
+    <a href="{% url 'konten:unit_detail' sekretariat.slug %}" class="org-sesditjen">
+      <div style="font-weight:700; font-size:0.84rem;">{% if sekretariat.nama_pejabat %}{{ sekretariat.nama_pejabat }}{% else %}{{ sekretariat.singkatan }}{% endif %}</div>
+      <div style="font-size:0.72rem; color:var(--muted); margin-top:3px;">{{ sekretariat.jabatan|default:sekretariat.nama }}</div>
+    </a>
+    {% endif %}
+
     <div class="org-stem"></div>
     <div class="org-bar-full"></div>
 
-    <!-- Sesditjen + 5 Direktorat sejajar dalam satu baris; di layar sempit tinggal digeser, struktur tidak berubah -->
+    <!-- 5 Direktorat sejajar dalam satu baris; di layar sempit tinggal digeser, struktur tidak berubah -->
     <div class="org-scroll">
       <div class="org-row">
-        {% if sekretariat %}
-        <div class="org-col">
-          <div style="width:2px; height:16px; background:#7a93bd;"></div>
-          <a href="{% url 'konten:unit_detail' sekretariat.slug %}" class="org-box">
-            <div style="font-weight:700; font-size:0.84rem;">{% if sekretariat.nama_pejabat %}{{ sekretariat.nama_pejabat }}{% else %}{{ sekretariat.singkatan }}{% endif %}</div>
-            <div style="font-size:0.72rem; color:var(--muted); margin-top:3px;">{{ sekretariat.jabatan|default:sekretariat.nama }}</div>
-          </a>
-        </div>
-        {% endif %}
         {% for unit in direktorat %}
         <div class="org-col">
           <div style="width:2px; height:16px; background:#7a93bd;"></div>
