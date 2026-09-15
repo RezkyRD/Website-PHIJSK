@@ -83,12 +83,6 @@
                      padding:12px 18px; text-align:center; width:200px; color:var(--navy); }
     .org-stem { width:2px; height:20px; background:#7a93bd; }
     .org-bar-full { width:100%; border-top:2px solid #7a93bd; }
-    .branch-scroll { display:flex; overflow-x:auto; width:100%; }
-    .branch-row { flex:0 0 auto; margin:0 auto; display:flex; align-items:center; }
-    .branch-side { width:210px; flex-shrink:0; display:flex; align-items:center; }
-    .branch-side.left { justify-content:flex-end; }
-    .branch-stub { width:20px; height:2px; background:#7a93bd; flex-shrink:0; }
-    .branch-stem { width:2px; align-self:stretch; background:#7a93bd; flex-shrink:0; }
     .org-scroll { display:flex; overflow-x:auto; width:100%; padding-bottom:10px; }
     .org-row { flex:0 0 auto; margin:0 auto; display:flex; gap:16px; flex-wrap:nowrap; margin-top:16px; }
     .org-col { display:flex; flex-direction:column; align-items:center; flex-shrink:0; }
@@ -105,20 +99,11 @@
     <div class="org-stem"></div>
 
     {% if sekretariat %}
-    <!-- Sesditjen bercabang ke samping dari garis batang utama -->
-    <div class="branch-scroll">
-      <div class="branch-row">
-        <div class="branch-side left">
-          <a href="{% url 'konten:unit_detail' sekretariat.slug %}" class="org-sesditjen">
-            <div style="font-weight:700; font-size:0.84rem;">{% if sekretariat.nama_pejabat %}{{ sekretariat.nama_pejabat }}{% else %}{{ sekretariat.singkatan }}{% endif %}</div>
-            <div style="font-size:0.72rem; color:var(--muted); margin-top:3px;">{{ sekretariat.jabatan|default:sekretariat.nama }}</div>
-          </a>
-          <div class="branch-stub"></div>
-        </div>
-        <div class="branch-stem"></div>
-        <div class="branch-side"></div>
-      </div>
-    </div>
+    <!-- Sesditjen sebagai tingkatan tersendiri, di antara Dirjen dan baris Direktorat -->
+    <a href="{% url 'konten:unit_detail' sekretariat.slug %}" class="org-sesditjen">
+      <div style="font-weight:700; font-size:0.84rem;">{% if sekretariat.nama_pejabat %}{{ sekretariat.nama_pejabat }}{% else %}{{ sekretariat.singkatan }}{% endif %}</div>
+      <div style="font-size:0.72rem; color:var(--muted); margin-top:3px;">{{ sekretariat.jabatan|default:sekretariat.nama }}</div>
+    </a>
     <div class="org-stem"></div>
     {% endif %}
 
