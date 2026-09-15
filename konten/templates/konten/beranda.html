@@ -3,12 +3,28 @@
 {% block title %}Beranda{% endblock %}
 
 {% block hero %}
-<section style="min-height:440px; display:flex; align-items:center;
-                padding: 60px 32px;
-                background-image: linear-gradient(90deg, rgba(15,32,64,0.94) 0%, rgba(15,32,64,0.82) 45%, rgba(15,32,64,0.40) 100%), url('{% static "konten/img/gedung-kemnaker.jpg" %}');
-                background-size: cover; background-position: center top 20%;">
+<style>
+  .hero-banner {
+    min-height: 440px;
+    display:flex; align-items:center;
+    padding: 60px 32px;
+    background-image: linear-gradient(90deg, rgba(15,32,64,0.94) 0%, rgba(15,32,64,0.82) 45%, rgba(15,32,64,0.40) 100%), url('{% static "konten/img/gedung-kemnaker.jpg" %}');
+    background-size: cover;
+    background-position: center top 20%;
+  }
+  .hero-banner h1 { color:#fff; font-size:2.6rem; line-height:1.25; margin:0; }
+  @media (max-width: 640px) {
+    .hero-banner {
+      min-height: 300px;
+      padding: 32px 20px;
+      background-position: center center;
+    }
+    .hero-banner h1 { font-size: 1.7rem; }
+  }
+</style>
+<section class="hero-banner">
   <div style="max-width: 1080px; margin: 0 auto; width:100%;">
-    <h1 style="color:#fff; font-size:2.6rem; line-height:1.25; margin:0;">
+    <h1>
       Website Ditjen PHI-JSK<br>Kemnaker RI
     </h1>
   </div>
@@ -60,43 +76,45 @@
   <h2 style="color: var(--navy); margin-bottom: 6px;">Struktur Organisasi</h2>
   <p style="color: var(--muted); margin-top:0;">Klik salah satu kotak untuk membuka halaman unit tersebut.</p>
 
-  <div style="display:flex; flex-direction:column; align-items:center; margin-top: 30px; overflow-x:auto;">
+  <style>
+    .org-scroll { width:100%; overflow-x:auto; padding-bottom:10px; }
+    .org-row { display:flex; gap:16px; flex-wrap:nowrap; justify-content:center; width:max-content; margin:0 auto; }
+    .org-col { display:flex; flex-direction:column; align-items:center; flex-shrink:0; }
+    .org-box { display:block; text-decoration:none; background:#eef2f9; border:1px solid #cdd9ec; border-radius:6px;
+               padding:12px 16px; text-align:center; width:170px; color:var(--navy); }
+  </style>
+  <div style="display:flex; flex-direction:column; align-items:center; margin-top: 30px;">
 
     <!-- Dirjen -->
     <div style="background: var(--navy); color:#fff; border-radius:6px; padding:14px 22px; text-align:center; min-width:220px;">
       <div style="font-weight:700; font-size:0.92rem;">{% if profil.nama_dirjen %}{{ profil.nama_dirjen }}{% else %}Direktur Jenderal{% endif %}</div>
       <div style="font-size:0.76rem; color:#b9c6de; margin-top:4px;">Direktur Jenderal PHI dan Jamsos</div>
     </div>
+    <div style="width:2px; height:20px; background:#7a93bd;"></div>
 
-    <!-- Garis batang lurus ke bawah, dengan Sekretariat bercabang ke samping di tengah -->
-    <div style="position:relative; width:2px; height:110px; background:#cdd9ec;">
-      {% if sekretariat %}
-      <div style="position:absolute; top:50%; right:50%; transform:translateY(-50%); display:flex; align-items:center;">
-        <a href="{% url 'konten:unit_detail' sekretariat.slug %}"
-           style="display:block; text-decoration:none; background:#eef2f9; border:1px solid #cdd9ec; border-radius:6px;
-                  padding:12px 16px; text-align:center; width:170px; color:var(--navy);">
-          <div style="font-weight:700; font-size:0.84rem;">{% if sekretariat.nama_pejabat %}{{ sekretariat.nama_pejabat }}{% else %}{{ sekretariat.singkatan }}{% endif %}</div>
-          <div style="font-size:0.72rem; color:var(--muted); margin-top:3px;">{{ sekretariat.jabatan|default:sekretariat.nama }}</div>
-        </a>
-        <div style="width:40px; height:2px; background:#cdd9ec;"></div>
+    <!-- Sesditjen + 5 Direktorat sejajar dalam satu baris; di layar sempit tinggal digeser, struktur tidak berubah -->
+    <div class="org-scroll">
+      <div style="border-top:2px solid #7a93bd; width:max-content; min-width:100%; margin:0 auto;"></div>
+      <div class="org-row">
+        {% if sekretariat %}
+        <div class="org-col">
+          <div style="width:2px; height:16px; background:#7a93bd;"></div>
+          <a href="{% url 'konten:unit_detail' sekretariat.slug %}" class="org-box">
+            <div style="font-weight:700; font-size:0.84rem;">{% if sekretariat.nama_pejabat %}{{ sekretariat.nama_pejabat }}{% else %}{{ sekretariat.singkatan }}{% endif %}</div>
+            <div style="font-size:0.72rem; color:var(--muted); margin-top:3px;">{{ sekretariat.jabatan|default:sekretariat.nama }}</div>
+          </a>
+        </div>
+        {% endif %}
+        {% for unit in direktorat %}
+        <div class="org-col">
+          <div style="width:2px; height:16px; background:#7a93bd;"></div>
+          <a href="{% url 'konten:unit_detail' unit.slug %}" class="org-box">
+            <div style="font-weight:700; font-size:0.84rem;">{% if unit.nama_pejabat %}{{ unit.nama_pejabat }}{% else %}{{ unit.singkatan }}{% endif %}</div>
+            <div style="font-size:0.72rem; color:var(--muted); margin-top:3px;">{{ unit.jabatan|default:unit.nama }}</div>
+          </a>
+        </div>
+        {% endfor %}
       </div>
-      {% endif %}
-    </div>
-
-    <!-- Garis horizontal, lalu 5 Direktorat sejajar di bawahnya -->
-    <div style="width:100%; max-width: 980px; border-top:2px solid #cdd9ec;"></div>
-    <div style="display:flex; gap:16px; margin-top:0; flex-wrap:wrap; justify-content:center;">
-      {% for unit in direktorat %}
-      <div style="display:flex; flex-direction:column; align-items:center;">
-        <div style="width:2px; height:16px; background:#cdd9ec;"></div>
-        <a href="{% url 'konten:unit_detail' unit.slug %}"
-           style="display:block; text-decoration:none; background:#eef2f9; border:1px solid #cdd9ec; border-radius:6px;
-                  padding:12px 16px; text-align:center; width:170px; color:var(--navy);">
-          <div style="font-weight:700; font-size:0.84rem;">{% if unit.nama_pejabat %}{{ unit.nama_pejabat }}{% else %}{{ unit.singkatan }}{% endif %}</div>
-          <div style="font-size:0.72rem; color:var(--muted); margin-top:3px;">{{ unit.jabatan|default:unit.nama }}</div>
-        </a>
-      </div>
-      {% endfor %}
     </div>
   </div>
 </section>
