@@ -128,12 +128,32 @@ class Kontak(models.Model):
     email = models.EmailField(blank=True)
     jam_operasional = models.CharField(max_length=200, blank=True)
 
+    instagram = models.URLField(blank=True, help_text="Link lengkap, contoh: https://instagram.com/kemnaker")
+    facebook = models.URLField(blank=True, help_text="Link lengkap, contoh: https://facebook.com/kemnaker")
+    twitter_x = models.URLField("X (Twitter)", blank=True, help_text="Link lengkap, contoh: https://x.com/kemnaker")
+    youtube = models.URLField(blank=True, help_text="Link lengkap, contoh: https://youtube.com/@kemnaker")
+    tiktok = models.URLField(blank=True, help_text="Link lengkap, contoh: https://tiktok.com/@kemnaker")
+
     class Meta:
         verbose_name = "Kontak"
         verbose_name_plural = "Kontak"
 
     def __str__(self):
         return "Informasi Kontak Ditjen PHI dan Jamsos"
+
+    def sosmed_items(self):
+        """Daftar sosmed yang terisi saja, masing-masing dengan label & warna brand untuk tombol di halaman Kontak."""
+        brands = [
+            ("instagram", self.instagram, "Instagram", "#E1306C"),
+            ("facebook", self.facebook, "Facebook", "#1877F2"),
+            ("twitter_x", self.twitter_x, "X (Twitter)", "#000000"),
+            ("youtube", self.youtube, "YouTube", "#FF0000"),
+            ("tiktok", self.tiktok, "TikTok", "#000000"),
+        ]
+        return [
+            {"key": key, "url": url, "label": label, "color": color}
+            for key, url, label, color in brands if url
+        ]
 
 
 class UnitAdminProfile(models.Model):

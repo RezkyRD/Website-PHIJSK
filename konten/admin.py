@@ -124,6 +124,14 @@ class BeritaAdmin(UnitScopedAdminMixin, admin.ModelAdmin):
 @admin.register(Kontak)
 class KontakAdmin(admin.ModelAdmin):
     # Kontak Ditjen: hanya superuser yang mengelola (informasi terpusat, bukan per unit)
+    fieldsets = (
+        ("Informasi Kontak", {"fields": ("alamat", "telepon", "email", "jam_operasional")}),
+        ("Media Sosial (kosongkan yang tidak dipakai)", {
+            "fields": ("instagram", "facebook", "twitter_x", "youtube", "tiktok"),
+            "description": "Isi dengan link lengkap (termasuk https://). Yang kosong tidak akan tampil di halaman Kontak.",
+        }),
+    )
+
     def has_module_permission(self, request):
         return request.user.is_superuser
 

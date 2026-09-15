@@ -11,6 +11,24 @@
   {% if info.email %}<p><strong>Email:</strong> {{ info.email }}</p>{% endif %}
   {% if info.jam_operasional %}<p><strong>Jam Operasional:</strong> {{ info.jam_operasional }}</p>{% endif %}
 </div>
+
+{% with sosmed=info.sosmed_items %}
+{% if sosmed %}
+<div style="margin-top:24px;">
+  <p style="font-weight:600; color:var(--navy); margin-bottom:10px;">Media Sosial</p>
+  <div style="display:flex; flex-wrap:wrap; gap:10px;">
+    {% for s in sosmed %}
+    <a href="{{ s.url }}" target="_blank" rel="noopener noreferrer"
+       style="display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+              background:{{ s.color }}; color:#fff; border-radius:6px; padding:9px 16px; font-size:0.86rem; font-weight:600;">
+      {{ s.label }}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endwith %}
+
 {% else %}
 <p style="color:#5b6b82;">Informasi kontak belum diisi di admin.</p>
 {% endif %}
