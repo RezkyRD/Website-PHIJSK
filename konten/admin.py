@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UnitKerja, Berita, Kontak, UnitAdminProfile, ProfilDitjen, TimKerja
+from .models import UnitKerja, Berita, Komentar, Kontak, UnitAdminProfile, ProfilDitjen, TimKerja
 
 
 def get_user_unit(user):
@@ -119,6 +119,44 @@ class BeritaAdmin(UnitScopedAdminMixin, admin.ModelAdmin):
         if not obj.pk and not obj.penulis_id:
             obj.penulis = request.user
         super().save_model(request, obj, form, change)
+
+
+@admin.register(Komentar)
+class KomentarAdmin(UnitScopedAdminMixin, admin.ModelAdmin):
+    """Moderasi komentar pengunjung: superuser lihat semua, admin unit hanya komentar pada Informasi unitnya sendiri."""
+
+    list_display = ("nama", "berita", "get_unit_kerja", "disetujui", "dibuat_pada")
+    list_filter = ("disetujui", "berita__unit_kerja")
+    search_fields = ("nama", "email", "isi")
+    readonly_fields = ("berita", "nama", "email", "isi", "dibuat_pada")
+    actions = ["setujui_komentar", "tolak_komentar"]
+
+    def get_queryset(self, request):
+        # Field 'unit_kerja' pada Komentar cuma properti Python (lewat berita.unit_kerja), jadi
+        # filter queryset-nya lewat relasi FK 'berita__unit_kerja', bukan lewat mixin default.
+        qs = admin.ModelAdmin.get_queryset(self, request)
+        if request.user.is_superuser:
+            return qs
+        unit = get_user_unit(request.user)
+        if unit is None:
+            return qs.none()
+        return qs.filter(berita__unit_kerja=unit)
+
+    def has_add_permission(self, request):
+        # Komentar hanya masuk lewat form publik di halaman Informasi, bukan dibuat manual di admin.
+        return False
+
+    @admin.display(description="Unit Kerja")
+    def get_unit_kerja(self, obj):
+        return obj.berita.unit_kerja
+
+    @admin.action(description="Setujui komentar terpilih (tampilkan di halaman publik)")
+    def setujui_komentar(self, request, queryset):
+        queryset.update(disetujui=True)
+
+    @admin.action(description="Tolak & hapus komentar terpilih")
+    def tolak_komentar(self, request, queryset):
+        queryset.delete()
 
 
 @admin.register(Kontak)

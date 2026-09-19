@@ -76,7 +76,7 @@
     <p style="color:#5b6b82;">Konten unit ini belum diisi di admin.</p>
   {% endif %}
 
-{% elif tab == "berita" %}
+{% elif tab == "informasi" %}
   {% if berita_list %}
     <style>
       .berita-item { display:flex; gap:18px; }
@@ -88,7 +88,7 @@
     </style>
     <div style="border-top: 1px solid #e2e8f0;">
       {% for b in berita_list %}
-      <a href="{% url 'konten:berita_detail' b.slug %}" class="berita-item"
+      <a href="{% url 'konten:informasi_detail' b.slug %}" class="berita-item"
          style="text-decoration:none; color:inherit; padding:18px 0; border-bottom:1px solid #e2e8f0;">
         {% if b.gambar %}
         <div class="berita-thumb" style="border-radius:4px; overflow:hidden; background:#eef2f9;">
@@ -108,7 +108,7 @@
       {% endfor %}
     </div>
   {% else %}
-    <p style="color:#5b6b82;">Belum ada berita untuk unit ini.</p>
+    <p style="color:#5b6b82;">Belum ada informasi untuk unit ini.</p>
   {% endif %}
 {% endif %}
 

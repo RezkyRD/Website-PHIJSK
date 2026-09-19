@@ -40,37 +40,109 @@
   .tupoksi-item .accordion-icon::after { content: "+"; }
   .tupoksi-item[open] .accordion-icon::after { content: "\2212"; }
   .tupoksi-item summary:hover { background: rgba(255,255,255,0.08); }
+
+  .home-grid { display:grid; grid-template-columns: 1.6fr 1fr; gap:24px; align-items:start; margin-bottom:16px; }
+  @media (max-width: 860px) { .home-grid { grid-template-columns: 1fr; } }
+
+  .headline-card { background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden; }
+  .headline-card-head { padding:22px 24px 4px; }
+  .headline-card-head h2 { color: var(--navy); font-size:1.15rem; margin:0 0 6px; }
+  .headline-card-head p { color: var(--muted); font-size:0.84rem; margin:0; }
+
+  .headline-featured { display:block; text-decoration:none; color:inherit; }
+  .headline-featured-img { width:100%; aspect-ratio: 16/9; object-fit:cover; display:block; background:var(--blue-light); }
+  .headline-featured-noimg { width:100%; aspect-ratio: 16/9; background:var(--blue-light); display:flex;
+                              align-items:center; justify-content:center; color:#9fb0c9; font-size:0.85rem; }
+  .headline-featured-body { padding:18px 24px 20px; border-bottom:1px solid #eef1f5; }
+  .headline-featured-title { font-weight:700; color:var(--navy); font-size:1.3rem; line-height:1.35; margin:9px 0 10px; }
+  .headline-featured-excerpt { color:#48566b; font-size:0.92rem; line-height:1.6; margin:0 0 10px; }
+  .headline-featured-more { color:var(--accent); font-size:0.86rem; font-weight:600; }
+
+  .headline-grid { display:grid; grid-template-columns: 1fr 1fr; gap:18px; padding:20px 24px 24px; }
+  @media (max-width: 560px) { .headline-grid { grid-template-columns: 1fr; } }
+  .headline-item { display:block; text-decoration:none; color:inherit; }
+  .headline-item-img { width:100%; aspect-ratio: 16/9; object-fit:cover; display:block; border-radius:6px; background:var(--blue-light); margin-bottom:9px; }
+  .headline-item-noimg { width:100%; aspect-ratio: 16/9; border-radius:6px; background:var(--blue-light); display:flex;
+                          align-items:center; justify-content:center; color:#9fb0c9; font-size:0.76rem; margin-bottom:9px; }
+  .headline-unit { display:inline-block; background:var(--blue-light); color:var(--navy); font-size:0.68rem; font-weight:700;
+                   letter-spacing:0.02em; padding:3px 9px; border-radius:4px; margin-bottom:7px; }
+  .headline-title { font-weight:700; color:var(--navy); font-size:0.92rem; line-height:1.4; }
+  .headline-date { font-size:0.74rem; color:var(--muted); margin-top:6px; }
 </style>
 
-<section style="background: var(--navy); color: #fff; border-radius:8px; padding: 32px 36px 44px; margin-bottom: 16px;">
+<div class="home-grid">
+  <div class="headline-card">
+    <div class="headline-card-head">
+      <h2>Informasi Terbaru</h2>
+      <p>Dari seluruh unit kerja Ditjen PHI dan Jamsos.</p>
+    </div>
 
-  {% if profil %}
-    {% if profil.paragraf_1 %}
-    <p style="line-height:1.7;">{{ profil.paragraf_1 }}</p>
-    {% endif %}
-    {% if profil.paragraf_2 %}
-    <p style="line-height:1.7;">{{ profil.paragraf_2 }}</p>
-    {% endif %}
-    {% if profil.tupoksi_pembuka %}
-    <p style="line-height:1.7; margin-top:22px; margin-bottom:18px;">{{ profil.tupoksi_pembuka }}</p>
-    {% endif %}
-    {% if tupoksi_items %}
-    <div>
-      {% for item in tupoksi_items %}
-      <details class="tupoksi-item" style="border:1px solid rgba(255,255,255,0.25); border-radius:6px; margin-bottom:10px; background: rgba(255,255,255,0.04);">
-        <summary style="padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:16px; font-weight:600;">
-          <span>{{ item.letter }}. {{ item.title }}</span>
-          <span class="accordion-icon" style="font-size:1.15rem; color:#cdd9ec; flex-shrink:0;"></span>
-        </summary>
-        <div style="padding:0 18px 18px; line-height:1.7; color:#e3e8f2;">{{ item.full }}</div>
-      </details>
+    {% with headline_list|first as featured %}
+    {% if featured %}
+    <a href="{% url 'konten:informasi_detail' featured.slug %}" class="headline-featured">
+      {% if featured.gambar %}
+      <img src="{{ featured.gambar.url }}" alt="{{ featured.judul }}" class="headline-featured-img">
+      {% else %}
+      <div class="headline-featured-noimg">Tanpa foto</div>
+      {% endif %}
+      <div class="headline-featured-body">
+        <span class="headline-unit">{{ featured.unit_kerja.singkatan }}</span>
+        <span class="headline-date" style="margin-left:6px;">{{ featured.tanggal_publish|date:"l, d F Y" }}</span>
+        <div class="headline-featured-title">{{ featured.judul }}</div>
+        <p class="headline-featured-excerpt">{{ featured.isi|truncatewords:28 }}</p>
+        <span class="headline-featured-more">Baca Selengkapnya &rsaquo;</span>
+      </div>
+    </a>
+
+    <div class="headline-grid">
+      {% for b in headline_list|slice:"1:" %}
+      <a href="{% url 'konten:informasi_detail' b.slug %}" class="headline-item">
+        {% if b.gambar %}
+        <img src="{{ b.gambar.url }}" alt="{{ b.judul }}" class="headline-item-img">
+        {% else %}
+        <div class="headline-item-noimg">Tanpa foto</div>
+        {% endif %}
+        <span class="headline-unit">{{ b.unit_kerja.singkatan }}</span>
+        <div class="headline-title">{{ b.judul }}</div>
+        <div class="headline-date">{{ b.tanggal_publish|timesince }} yang lalu</div>
+      </a>
       {% endfor %}
     </div>
+    {% else %}
+    <p style="color:#8a94a6; font-size:0.88rem; padding:0 24px 22px;">Belum ada informasi yang diterbitkan.</p>
     {% endif %}
-  {% else %}
-    <p style="color:#b9c6de;">Profil Ditjen belum diisi di admin.</p>
-  {% endif %}
-</section>
+    {% endwith %}
+  </div>
+
+  <section style="background: var(--navy); color: #fff; border-radius:8px; padding: 32px 30px 40px;">
+    {% if profil %}
+      {% if profil.paragraf_1 %}
+      <p style="line-height:1.7;">{{ profil.paragraf_1 }}</p>
+      {% endif %}
+      {% if profil.paragraf_2 %}
+      <p style="line-height:1.7;">{{ profil.paragraf_2 }}</p>
+      {% endif %}
+      {% if profil.tupoksi_pembuka %}
+      <p style="line-height:1.7; margin-top:22px; margin-bottom:18px;">{{ profil.tupoksi_pembuka }}</p>
+      {% endif %}
+      {% if tupoksi_items %}
+      <div>
+        {% for item in tupoksi_items %}
+        <details class="tupoksi-item" style="border:1px solid rgba(255,255,255,0.25); border-radius:6px; margin-bottom:10px; background: rgba(255,255,255,0.04);">
+          <summary style="padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:16px; font-weight:600;">
+            <span>{{ item.letter }}. {{ item.title }}</span>
+            <span class="accordion-icon" style="font-size:1.15rem; color:#cdd9ec; flex-shrink:0;"></span>
+          </summary>
+          <div style="padding:0 18px 18px; line-height:1.7; color:#e3e8f2;">{{ item.full }}</div>
+        </details>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% else %}
+      <p style="color:#b9c6de;">Profil Ditjen belum diisi di admin.</p>
+    {% endif %}
+  </section>
+</div>
 
 <section id="unit-kerja" style="margin-top: 36px;">
   <h2 style="color: var(--navy); margin-bottom: 6px;">Struktur Organisasi</h2>

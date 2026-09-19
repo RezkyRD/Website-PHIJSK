@@ -101,8 +101,8 @@ class Berita(models.Model):
     tanggal_update = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "Berita"
-        verbose_name_plural = "Berita"
+        verbose_name = "Informasi"
+        verbose_name_plural = "Informasi"
         ordering = ["-tanggal_publish"]
 
     def save(self, *args, **kwargs):
@@ -118,6 +118,33 @@ class Berita(models.Model):
 
     def __str__(self):
         return self.judul
+
+    def komentar_disetujui(self):
+        return self.komentar_list.filter(disetujui=True).order_by("dibuat_pada")
+
+
+class Komentar(models.Model):
+    """Komentar pengunjung pada satu Informasi. Perlu disetujui admin/admin unit dulu sebelum tampil publik."""
+
+    berita = models.ForeignKey(Berita, on_delete=models.CASCADE, related_name="komentar_list")
+    nama = models.CharField("Nama", max_length=100)
+    email = models.EmailField("Email", blank=True, help_text="Opsional, tidak ditampilkan publik")
+    isi = models.TextField("Komentar")
+    disetujui = models.BooleanField("Disetujui", default=False)
+    dibuat_pada = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Komentar"
+        verbose_name_plural = "Komentar"
+        ordering = ["-dibuat_pada"]
+
+    @property
+    def unit_kerja(self):
+        """Dipakai untuk pembatasan hak akses admin per direktorat (lihat UnitScopedAdminMixin)."""
+        return self.berita.unit_kerja
+
+    def __str__(self):
+        return f"{self.nama} pada {self.berita.judul}"
 
 
 class Kontak(models.Model):
