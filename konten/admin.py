@@ -123,13 +123,15 @@ class BeritaAdmin(UnitScopedAdminMixin, admin.ModelAdmin):
 
 @admin.register(Komentar)
 class KomentarAdmin(UnitScopedAdminMixin, admin.ModelAdmin):
-    """Moderasi komentar pengunjung: superuser lihat semua, admin unit hanya komentar pada Informasi unitnya sendiri."""
+    """Komentar & balasan tampil langsung di halaman publik tanpa moderasi. Menu ini untuk memantau
+    dan menghapus komentar yang tidak pantas/spam saja — superuser lihat semua, admin unit hanya
+    komentar pada Informasi unitnya sendiri. Menghapus induk komentar otomatis menghapus balasannya."""
 
-    list_display = ("nama", "berita", "get_unit_kerja", "disetujui", "dibuat_pada")
-    list_filter = ("disetujui", "berita__unit_kerja")
+    list_display = ("nama", "is_admin_reply", "get_cuplikan", "berita", "get_unit_kerja", "parent", "dibuat_pada")
+    list_filter = ("is_admin_reply", "berita__unit_kerja")
     search_fields = ("nama", "email", "isi")
-    readonly_fields = ("berita", "nama", "email", "isi", "dibuat_pada")
-    actions = ["setujui_komentar", "tolak_komentar"]
+    readonly_fields = ("berita", "parent", "nama", "email", "isi", "is_admin_reply", "dibuat_pada")
+    actions = ["hapus_komentar"]
 
     def get_queryset(self, request):
         # Field 'unit_kerja' pada Komentar cuma properti Python (lewat berita.unit_kerja), jadi
@@ -143,19 +145,20 @@ class KomentarAdmin(UnitScopedAdminMixin, admin.ModelAdmin):
         return qs.filter(berita__unit_kerja=unit)
 
     def has_add_permission(self, request):
-        # Komentar hanya masuk lewat form publik di halaman Informasi, bukan dibuat manual di admin.
+        # Komentar hanya masuk lewat form publik di halaman Informasi (termasuk balasan admin lewat halaman itu
+        # saat login), bukan dibuat manual di admin.
         return False
 
     @admin.display(description="Unit Kerja")
     def get_unit_kerja(self, obj):
         return obj.berita.unit_kerja
 
-    @admin.action(description="Setujui komentar terpilih (tampilkan di halaman publik)")
-    def setujui_komentar(self, request, queryset):
-        queryset.update(disetujui=True)
+    @admin.display(description="Isi")
+    def get_cuplikan(self, obj):
+        return (obj.isi[:60] + "…") if len(obj.isi) > 60 else obj.isi
 
-    @admin.action(description="Tolak & hapus komentar terpilih")
-    def tolak_komentar(self, request, queryset):
+    @admin.action(description="Hapus komentar terpilih (beserta balasannya)")
+    def hapus_komentar(self, request, queryset):
         queryset.delete()
 
 

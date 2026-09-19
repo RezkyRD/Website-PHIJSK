@@ -27,14 +27,31 @@
 <style>
   .komentar-section { max-width:760px; margin-top:48px; border-top:1px solid #e2e8f0; padding-top:28px; }
   .komentar-item { padding:16px 0; border-bottom:1px solid #eef1f5; }
+  .komentar-replies .komentar-item:last-child { border-bottom:none; }
   .komentar-nama { font-weight:700; color:#16305c; font-size:0.92rem; }
+  .komentar-badge {
+    display:inline-block; background:#16305c; color:#fff; font-size:0.66rem; font-weight:700;
+    letter-spacing:0.02em; padding:2px 8px; border-radius:4px; margin-left:7px; vertical-align:1px;
+  }
+  .komentar-admin > .komentar-isi { background:#f4f7fc; border-radius:6px; padding:8px 12px; }
   .komentar-tanggal { font-size:0.76rem; color:#8a94a6; margin-left:8px; font-weight:400; }
   .komentar-isi { margin-top:6px; line-height:1.6; font-size:0.94rem; white-space:pre-line; }
+  .komentar-replies {
+    margin:12px 0 0 18px; padding-left:16px; border-left:2px solid #eef1f5;
+  }
+  .komentar-reply-toggle { margin-top:8px; }
+  .komentar-reply-toggle summary {
+    cursor:pointer; color:var(--accent); font-size:0.82rem; font-weight:600; list-style:none;
+  }
+  .komentar-reply-toggle summary::-webkit-details-marker { display:none; }
+  .komentar-reply-toggle summary::before { content:"↩ "; }
+  .komentar-reply-form { margin-top:10px; max-width:480px; }
   .komentar-form input[type=text], .komentar-form input[type=email], .komentar-form textarea {
     width:100%; padding:10px 12px; border:1px solid #cdd9ec; border-radius:6px; font-size:0.92rem;
     font-family:inherit; margin-bottom:12px; box-sizing:border-box;
   }
   .komentar-form textarea { resize:vertical; min-height:90px; }
+  .komentar-reply-form textarea { min-height:64px; }
   .komentar-form button {
     background:var(--accent); color:#fff; border:none; border-radius:6px; padding:10px 22px;
     font-size:0.9rem; font-weight:600; cursor:pointer;
@@ -54,14 +71,16 @@
     {% endfor %}
   {% endif %}
 
-  <h2 style="color:#16305c; font-size:1.1rem; margin-bottom:18px;">Komentar ({{ komentar_list|length }})</h2>
+  <h2 style="color:#16305c; font-size:1.1rem; margin-bottom:18px;">Komentar</h2>
 
-  {% for k in komentar_list %}
-  <div class="komentar-item">
-    <span class="komentar-nama">{{ k.nama }}</span>
-    <span class="komentar-tanggal">{{ k.dibuat_pada|date:"d F Y, H:i" }} WIB</span>
-    <div class="komentar-isi">{{ k.isi }}</div>
-  </div>
+  {% if is_staff %}
+  <p style="font-size:0.8rem; color:#5b6b82; background:#eef2f9; padding:8px 12px; border-radius:6px; margin-bottom:16px;">
+    Anda login sebagai admin — komentar dan balasan Anda akan otomatis ditandai badge "Admin".
+  </p>
+  {% endif %}
+
+  {% for k in komentar_root_list %}
+    {% include "konten/_komentar_node.html" with komentar=k is_staff=is_staff %}
   {% empty %}
   <p style="color:#8a94a6; font-size:0.9rem;">Belum ada komentar. Jadilah yang pertama berkomentar.</p>
   {% endfor %}
@@ -72,14 +91,16 @@
       <label>Website</label>
       <input type="text" name="website" tabindex="-1" autocomplete="off">
     </div>
+    {% if not is_staff %}
     <label style="font-size:0.85rem; font-weight:600; color:#374863;">Nama</label>
     <input type="text" name="nama" required maxlength="100">
     <label style="font-size:0.85rem; font-weight:600; color:#374863;">Email (opsional, tidak ditampilkan)</label>
     <input type="email" name="email">
+    {% endif %}
     <label style="font-size:0.85rem; font-weight:600; color:#374863;">Komentar</label>
     <textarea name="isi" required></textarea>
     <button type="submit">Kirim Komentar</button>
-    <p style="font-size:0.78rem; color:#8a94a6; margin-top:10px;">Komentar akan tampil setelah disetujui admin.</p>
+    <p style="font-size:0.78rem; color:#8a94a6; margin-top:10px;">Komentar tampil langsung. Admin dapat menghapus komentar yang tidak pantas.</p>
   </form>
 </div>
 

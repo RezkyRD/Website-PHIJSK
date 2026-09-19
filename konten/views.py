@@ -60,30 +60,47 @@ def unit_detail(request, slug):
 
 
 def informasi_detail(request, slug):
-    """Halaman detail satu Informasi — bisa dilihat publik & menerima komentar (perlu disetujui admin dulu)."""
+    """Halaman detail satu Informasi — publik bisa berkomentar & membalas komentar (berjenjang),
+    tampil langsung tanpa moderasi. Admin/staf yang login otomatis membalas sebagai admin unitnya."""
     berita = get_object_or_404(Berita, slug=slug, status="published")
+    is_staff = request.user.is_authenticated and request.user.is_staff
 
     if request.method == "POST":
         # Honeypot anti-spam: field ini disembunyikan lewat CSS di form, manusia tidak akan mengisinya.
         website = request.POST.get("website", "").strip()
-        nama = request.POST.get("nama", "").strip()
         isi = request.POST.get("isi", "").strip()
-        email = request.POST.get("email", "").strip()
+        parent_id = request.POST.get("parent_id", "").strip()
+        parent = Komentar.objects.filter(id=parent_id, berita=berita).first() if parent_id else None
+
+        if is_staff:
+            profile = getattr(request.user, "unit_profile", None)
+            if request.user.is_superuser:
+                nama = "Admin Ditjen PHI dan Jamsos"
+            elif profile:
+                nama = f"Admin {profile.unit_kerja.singkatan}"
+            else:
+                nama = f"Admin ({request.user.username})"
+            email = ""
+        else:
+            nama = request.POST.get("nama", "").strip()[:100]
+            email = request.POST.get("email", "").strip()
 
         if website:
             pass  # terdeteksi bot, diam-diam abaikan tanpa pesan error
-        elif not nama or not isi:
+        elif not isi or (not is_staff and not nama):
             messages.error(request, "Nama dan komentar wajib diisi.")
         else:
-            Komentar.objects.create(berita=berita, nama=nama[:100], email=email, isi=isi)
-            messages.success(request, "Komentar Anda terkirim dan akan tampil setelah disetujui admin.")
+            Komentar.objects.create(
+                berita=berita, parent=parent, nama=nama, email=email, isi=isi, is_admin_reply=is_staff,
+            )
+            messages.success(request, "Komentar Anda berhasil dikirim.")
         return redirect("konten:informasi_detail", slug=berita.slug)
 
-    komentar_list = berita.komentar_disetujui()
+    komentar_root_list = berita.komentar_root()
     return render(
         request,
         "konten/informasi_detail.html",
-        {"berita": berita, "komentar_list": komentar_list},
+        {"berita": berita, "komentar_root_list": komentar_root_list, "is_staff": is_staff},
     )
 
 

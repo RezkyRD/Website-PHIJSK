@@ -119,24 +119,31 @@ class Berita(models.Model):
     def __str__(self):
         return self.judul
 
-    def komentar_disetujui(self):
-        return self.komentar_list.filter(disetujui=True).order_by("dibuat_pada")
+    def komentar_root(self):
+        """Komentar level teratas (bukan balasan) untuk Informasi ini, urut dari yang paling lama."""
+        return self.komentar_list.filter(parent__isnull=True).order_by("dibuat_pada")
 
 
 class Komentar(models.Model):
-    """Komentar pengunjung pada satu Informasi. Perlu disetujui admin/admin unit dulu sebelum tampil publik."""
+    """Komentar/balasan pengunjung pada satu Informasi. Tampil langsung tanpa moderasi;
+    admin/admin unit tetap bisa menghapusnya dari Django admin bila perlu. Mendukung balasan
+    berjenjang lewat field `parent` (balasan dari balasan tetap tercatat dan tampil bersarang)."""
 
     berita = models.ForeignKey(Berita, on_delete=models.CASCADE, related_name="komentar_list")
+    parent = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="balasan",
+        verbose_name="Membalas komentar",
+    )
     nama = models.CharField("Nama", max_length=100)
     email = models.EmailField("Email", blank=True, help_text="Opsional, tidak ditampilkan publik")
     isi = models.TextField("Komentar")
-    disetujui = models.BooleanField("Disetujui", default=False)
+    is_admin_reply = models.BooleanField("Balasan admin", default=False)
     dibuat_pada = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = "Komentar"
         verbose_name_plural = "Komentar"
-        ordering = ["-dibuat_pada"]
+        ordering = ["dibuat_pada"]
 
     @property
     def unit_kerja(self):

@@ -1,0 +1,35 @@
+{% load static %}
+<div class="komentar-item{% if komentar.is_admin_reply %} komentar-admin{% endif %}" id="komentar-{{ komentar.id }}">
+  <div>
+    <span class="komentar-nama">{{ komentar.nama }}</span>
+    {% if komentar.is_admin_reply %}<span class="komentar-badge">Admin</span>{% endif %}
+    <span class="komentar-tanggal">{{ komentar.dibuat_pada|date:"d F Y, H:i" }} WIB</span>
+  </div>
+  <div class="komentar-isi">{{ komentar.isi }}</div>
+
+  <details class="komentar-reply-toggle">
+    <summary>Balas</summary>
+    <form method="post" class="komentar-form komentar-reply-form">
+      {% csrf_token %}
+      <input type="hidden" name="parent_id" value="{{ komentar.id }}">
+      <div class="hp-field" aria-hidden="true">
+        <label>Website</label>
+        <input type="text" name="website" tabindex="-1" autocomplete="off">
+      </div>
+      {% if not is_staff %}
+      <input type="text" name="nama" placeholder="Nama" required maxlength="100">
+      <input type="email" name="email" placeholder="Email (opsional, tidak ditampilkan)">
+      {% endif %}
+      <textarea name="isi" placeholder="Tulis balasan..." required></textarea>
+      <button type="submit">Kirim Balasan</button>
+    </form>
+  </details>
+
+  {% if komentar.balasan.all %}
+  <div class="komentar-replies">
+    {% for balasan in komentar.balasan.all %}
+      {% include "konten/_komentar_node.html" with komentar=balasan is_staff=is_staff %}
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
